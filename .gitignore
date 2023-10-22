@@ -100,3 +100,6 @@ ENV/
 
 
 .idea/
+
+# files that need to be local only
+config.yaml
