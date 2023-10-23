@@ -2,6 +2,7 @@
 import asyncio
 import http.cookies
 import random
+import socket
 from typing import *
 
 import aiohttp
@@ -83,6 +84,9 @@ async def run_multi_clients():
             client.stop_and_close() for client in clients
         ))
 
+# Create a Unix domain socket
+socket_path = '/Users/pjq/projects/BILIBILIxLLM/blivedm/my_socket.sock'
+sock = socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
 
 class MyHandler(blivedm.BaseHandler):
     # # 演示如何添加自定义回调
@@ -99,6 +103,8 @@ class MyHandler(blivedm.BaseHandler):
 
     def _on_danmaku(self, client: blivedm.BLiveClient, message: web_models.DanmakuMessage):
         print(f'[{client.room_id}] {message.uname}：{message.msg}')
+        sock.sendto(f'[{message.uname}]：{message.msg}'.encode(), socket_path)
+        # sock.sendto('aaaaa'.encode(), socket_path)
 
     def _on_gift(self, client: blivedm.BLiveClient, message: web_models.GiftMessage):
         print(f'[{client.room_id}] {message.uname} 赠送{message.gift_name}x{message.num}'

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Timestamp</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1 style="color: yellow">简单的GPT问答小测试</h1>
+    <p id="timestamp", style="color: red;"></p>
+    <p id="qa", style="color: rgb(17, 255, 0);"></p>
+
+    <script>
+        function updateTimestamp() {
+            $.get("/timestamp", function(data) {
+                $("#timestamp").text(data);
+            });
+        }
+
+        function updateQA() {
+            $.get("/qa", function(data) {
+                console.log(data)
+                $("#qa").html(data);
+            });
+        }
+
+        setInterval(updateTimestamp, 1000);
+        setInterval(updateQA, 1000);
+    </script>
+</body>
+</html>
