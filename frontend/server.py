@@ -33,6 +33,7 @@ def timestamp():
 
 @app.route('/qa')
 def qa():
+    line_break = '<br /> <br/> >>>>>>>>>>>>>>>>> <br /> <br />'
     print("impl qa")
     global init
     global socket_path
@@ -55,12 +56,23 @@ def qa():
     try:
         data, addr = sock.recvfrom(1024)
     except TimeoutError:
-        res = '<br />'.join(qa_list)
+        res = line_break.join(qa_list)
         print("res is: ", res)
         return res
 
     data = data.decode()
-    print(data)
+    uname = data.split("：")[0]
+    question = "".join(data.split("：")[1:])
+    # print(data)
+
+    output = openai.Completion.create(
+        model="Keniu-Chat",
+        prompt=question,
+        max_tokens=1024,
+        temperature = 0.0
+    )
+
+    print(json.dumps(output, indent=2).encode('utf-8').decode('unicode_escape'))
     if len(qa_list) > 3:
         qa_list = qa_list[1:]
     
@@ -77,10 +89,11 @@ def qa():
     #echo = output["choices"][0]["text"].encode('utf-8')
     #print(echo)
 
-    
-    qa_list.append(data)
+    resp = output["choices"][0]["text"]
+    print(resp)
+    qa_list.append("给" + uname + "的问题" + question + "的答复：" + resp)
 
-    res = '<br />'.join(qa_list)
+    res = line_break.join(qa_list)
 
     print(len(qa_list))
     print("resss is", res)
